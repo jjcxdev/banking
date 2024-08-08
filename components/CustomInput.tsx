@@ -1,9 +1,11 @@
+import React, { useId } from "react";
 import { z } from "zod";
 import { FormControl, FormField, FormLabel, FormMessage } from "./ui/form";
 import { Input } from "./ui/input";
 
 import { Control, FieldPath } from "react-hook-form";
 import { authformSchema } from "@/lib/utils";
+import { randomUUID } from "crypto";
 
 const formSchema = authformSchema("sign-up");
 
@@ -15,6 +17,8 @@ interface CustomInput {
 }
 
 const CustomInput = ({ control, name, label, placeholder }: CustomInput) => {
+  const id = useId();
+
   return (
     <FormField
       control={control}
@@ -25,6 +29,7 @@ const CustomInput = ({ control, name, label, placeholder }: CustomInput) => {
           <div className="flex w-full flex-col">
             <FormControl>
               <Input
+                id={id}
                 placeholder={placeholder}
                 className="input-class"
                 type={name === "password" ? "password" : "text"}

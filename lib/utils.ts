@@ -40,22 +40,22 @@ export const formatDateTime = (dateString: Date) => {
 
   const formattedDateTime: string = new Date(dateString).toLocaleString(
     "en-US",
-    dateTimeOptions
+    dateTimeOptions,
   );
 
   const formattedDateDay: string = new Date(dateString).toLocaleString(
     "en-US",
-    dateDayOptions
+    dateDayOptions,
   );
 
   const formattedDate: string = new Date(dateString).toLocaleString(
     "en-US",
-    dateOptions
+    dateOptions,
   );
 
   const formattedTime: string = new Date(dateString).toLocaleString(
     "en-US",
-    timeOptions
+    timeOptions,
   );
 
   return {
@@ -98,7 +98,7 @@ export function formUrlQuery({ params, key, value }: UrlQueryParams) {
       url: window.location.pathname,
       query: currentUrl,
     },
-    { skipNull: true }
+    { skipNull: true },
   );
 }
 
@@ -131,7 +131,7 @@ export function getAccountTypeColors(type: AccountTypes) {
 }
 
 export function countTransactionCategories(
-  transactions: Transaction[]
+  transactions: Transaction[],
 ): CategoryCount[] {
   const categoryCounts: { [category: string]: number } = {};
   let totalCount = 0;
@@ -160,7 +160,7 @@ export function countTransactionCategories(
       name: category,
       count: categoryCounts[category],
       totalCount,
-    })
+    }),
   );
 
   // Sort the aggregatedCategories array by count in descending order
@@ -195,17 +195,62 @@ export const getTransactionStatus = (date: Date) => {
   return date > twoDaysAgo ? "Processing" : "Success";
 };
 
-export const authformSchema = (type: string) => z.object({
- // sign up
-  username: type === 'sign-in'? z.string().optional() : z.string().min(8),
-  firstName: type === 'sign-in'? z.string().optional() : z.string().min(3),
-  lastName: type === 'sign-in'? z.string().optional() : z.string().min(3),
-  address: type === 'sign-in'? z.string().optional() : z.string().max(50),
-  state: type === 'sign-in'? z.string().optional() : z.string().min(2).max(2),
-  postalCode: type === 'sign-in'? z.string().optional() : z.string().min(3).max(3),
-  dateOfBirth: type === 'sign-in'? z.string().optional() : z.string().min(3),
-  ssn: type === 'sign-in'? z.string().optional() : z.string().min(3),
-  // both
-  email: z.string().email(),
-  password: z.string().min(8),
-});
+export const authformSchema = (type: string) =>
+  z.object({
+    // Fields for sign-up
+    firstName:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(3, { message: "First name must be at least 3 characters" }),
+    lastName:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(3, { message: "Last name must be at least 3 characters" }),
+    address1:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .max(50, { message: "Address must be less than 50 characters" }),
+    city:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .max(50, { message: "City must be less than 50 characters" }),
+    state:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(2, { message: "State must be 2 characters" })
+            .max(2, { message: "State must be 2 characters" }),
+    postalCode:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(3, { message: "Postal code must be at least 3 characters" })
+            .max(10, {
+              message: "Postal code must be less than 10 characters",
+            }),
+    dateOfBirth:
+      type === "sign-in"
+        ? z.string().optional()
+        : z
+            .string()
+            .min(3, { message: "Date of birth must be at least 3 characters" }),
+    ssn:
+      type === "sign-in"
+        ? z.string().optional()
+        : z.string().min(3, { message: "SSN must be at least 3 characters" }),
+    // Common fields
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z
+      .string()
+      .min(8, { message: "Password must be at least 8 characters" }),
+  });

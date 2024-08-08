@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { signUp, getLoggedInUser, signIn } from "@/lib/actions/user.actions";
 
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,28 +42,30 @@ const AuthForm = ({ type }: { type: string }) => {
 
   // 2. Define a submit handler.
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    console.log("Form submitted with data:", data);
     setIsLoading(true);
 
     try {
       // Sign up with Appwrite & create plaid token
-
       if (type === "sign-up") {
-        // const newUser = await signUp(data);
-        // setUser(newUser);
+        const newUser = await signUp(data);
+        setUser(newUser);
       }
 
-      if (type === "sign-up") {
-        // const response = await signIn({
-        //    email: data.email,
-        //    password:data.password,
-        // })
-        // if(response) router.push('/')
-      }
+      if (type === "sign-in") {
+        console.log("Sign-in process started...");
+        const response = await signIn({
+          email: data.email,
+          password: data.password,
+        });
+        console.log("Sign-in response:", response);
 
-      console.log(values);
-      setIsLoading(false);
+        if (response) router.push('/')
+      } else {
+        console.error("Sign-in failed, no response returned.");
+      }
     } catch (error) {
-      console.log(error);
+      console.log("Error during form submission", error);
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +88,11 @@ const AuthForm = ({ type }: { type: string }) => {
 
         <div className="flex flex-col gap-1 md:gap-3">
           <h1 className="text-24 lg:text-36 font-semibold text-gray-900">
-            {user ? "Link Account" : type === "sign-in" ? "Sign In" : "Sign Up"}
+            {user
+              ? "Link Account"
+              : type === "sign-in"
+                ? "Sign In"
+                : "Sign Up"}
             <p className="text-16 font-normal text-gray-600">
               {user
                 ? "Link your account to get started"
@@ -197,8 +204,7 @@ const AuthForm = ({ type }: { type: string }) => {
             </p>
             <Link
               href={type === "sign-in" ? "sign-up" : "/sign-in"}
-              className="form-link"
-            >
+              className="form-link">
               {type === "sign-in" ? "Sign up" : "Sign in"}
             </Link>
           </footer>
