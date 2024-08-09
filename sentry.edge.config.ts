@@ -7,12 +7,11 @@ import * as Sentry from "@sentry/nextjs";
 
 Sentry.init({
   dsn: "https://295f097434f7e53e0b95eb570346973a@o4507742955175936.ingest.us.sentry.io/4507742957142016",
-integrations:[
-    Sentry.replayIntegration(),
-  ],
-// Session Replay
-replaysSessionSampleRate:0.1,
-  replaysOnErrorSampleRate:1.0, 
+
+  replaysSessionSampleRate: 0.1,
+  replaysOnErrorSampleRate: 1.0,
+
+  integrations: [],
 
   // Adjust this value in production, or use tracesSampler for greater control
   tracesSampleRate: 1,
